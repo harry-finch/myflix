@@ -1,0 +1,13 @@
+{
+  "": {
+    "dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/TVshow.build/TVshow.d",
+    "object": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/TVshow.build/TVshow.o",
+    "swift-dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/TVshow.build/master.swiftdeps"
+  },
+  "/Users/mugen/Documents/01_Projets/TVshow/Sources/TVshow/TVshow.swift": {
+    "object": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/TVshow.build/TVshow.swift.o",
+    "swiftmodule": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/TVshow.build/TVshow~partial.swiftmodule",
+    "swift-dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/TVshow.build/TVshow.swiftdeps",
+    "diagnostics": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/TVshow.build/TVshow.dia"
+  }
+}

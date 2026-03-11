@@ -1,0 +1,13 @@
+{
+  "": {
+    "dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/aired.build/aired.d",
+    "object": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/aired.build/aired.o",
+    "swift-dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/aired.build/master.swiftdeps"
+  },
+  "/Users/mugen/Documents/01_Projets/TVshow/Sources/aired/aired.swift": {
+    "object": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/aired.build/aired.swift.o",
+    "swiftmodule": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/aired.build/aired~partial.swiftmodule",
+    "swift-dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/aired.build/aired.swiftdeps",
+    "diagnostics": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/aired.build/aired.dia"
+  }
+}

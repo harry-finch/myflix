@@ -1,0 +1,66 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<myflix-arm64-apple-macosx15.0-release.exe>","<myflix-arm64-apple-macosx15.0-release.module>"]
+  "myflix-arm64-apple-macosx15.0-release.exe": ["<myflix-arm64-apple-macosx15.0-release.exe>"]
+  "myflix-arm64-apple-macosx15.0-release.module": ["<myflix-arm64-apple-macosx15.0-release.module>"]
+  "test": ["<myflix-arm64-apple-macosx15.0-release.exe>","<myflix-arm64-apple-macosx15.0-release.module>"]
+default: "main"
+nodes:
+  "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift"]
+    outputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources"]
+    description: "Write auxiliary file /Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources"
+
+  "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o"]
+    outputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.product/Objects.LinkFileList"
+
+  "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Library/Developer/CommandLineTools/usr/bin/swiftc"]
+    outputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
+
+  "<myflix-arm64-apple-macosx15.0-release.exe>":
+    tool: phony
+    inputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix"]
+    outputs: ["<myflix-arm64-apple-macosx15.0-release.exe>"]
+
+  "<myflix-arm64-apple-macosx15.0-release.module>":
+    tool: phony
+    inputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules/myflix.swiftmodule"]
+    outputs: ["<myflix-arm64-apple-macosx15.0-release.module>"]
+
+  "C.myflix-arm64-apple-macosx15.0-release.exe":
+    tool: shell
+    inputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.product/Objects.LinkFileList"]
+    outputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix"]
+    description: "Linking ./.build/arm64-apple-macosx/release/myflix"
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-L","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release","-o","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix","-module-name","myflix","-Xlinker","-no_warn_duplicate_libraries","-emit-executable","-Xlinker","-dead_strip","-Xlinker","-alias","-Xlinker","_myflix_main","-Xlinker","_main","-Xlinker","-rpath","-Xlinker","@loader_path","@/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.product/Objects.LinkFileList","-Xlinker","-rpath","-Xlinker","/Library/Developer/CommandLineTools/usr/lib/swift-6.2/macosx","-target","arm64-apple-macosx12.0","-I","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-L","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-plugin-path","/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g"]
+
+  "C.myflix-arm64-apple-macosx15.0-release.module":
+    tool: shell
+    inputs: ["/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources"]
+    outputs: ["/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules/myflix.swiftmodule"]
+    description: "Compiling Swift Module 'myflix' (1 sources)"
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-module-name","myflix","-emit-dependencies","-emit-module","-emit-module-path","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules/myflix.swiftmodule","-output-file-map","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/output-file-map.json","-whole-module-optimization","-num-threads","10","-c","@/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources","-I","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules","-target","arm64-apple-macosx12.0","-whole-module-optimization","-num-threads","10","-serialize-diagnostics","-O","-j10","-DSWIFT_PACKAGE","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","myflix_main","-parse-as-library","-color-diagnostics","-swift-version","6","-I","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-L","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-plugin-path","/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xcc","-isysroot","-Xcc","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-Xcc","-fPIC","-Xcc","-g","-package-name","tvshow"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/","/Users/mugen/Documents/01_Projets/TVshow/Package.swift","/Users/mugen/Documents/01_Projets/TVshow/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

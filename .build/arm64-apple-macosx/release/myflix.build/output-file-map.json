@@ -1,0 +1,13 @@
+{
+  "": {
+    "dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.d",
+    "object": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.o",
+    "swift-dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/master.swiftdeps"
+  },
+  "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift": {
+    "object": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o",
+    "swiftmodule": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix~partial.swiftmodule",
+    "swift-dependencies": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swiftdeps",
+    "diagnostics": "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.dia"
+  }
+}

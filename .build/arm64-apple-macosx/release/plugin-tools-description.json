@@ -1,0 +1,223 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.myflix-arm64-apple-macosx15.0-release.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources",
+      "importPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "myflix",
+      "moduleOutputPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules/myflix.swiftmodule",
+      "objects" : [
+        "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx12.0",
+        "-whole-module-optimization",
+        "-num-threads",
+        "10",
+        "-serialize-diagnostics",
+        "-O",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "myflix_main",
+        "-parse-as-library",
+        "-color-diagnostics",
+        "-swift-version",
+        "6",
+        "-I",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-L",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-plugin-path",
+        "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "tvshow"
+      ],
+      "outputFileMapPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules/myflix.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift"
+      ],
+      "tempsPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build",
+      "wholeModuleOptimization" : true
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "myflix" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "myflix",
+      "-package-name",
+      "tvshow",
+      "-c",
+      "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift",
+      "-I",
+      "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/Modules",
+      "-target",
+      "arm64-apple-macosx12.0",
+      "-whole-module-optimization",
+      "-num-threads",
+      "10",
+      "-serialize-diagnostics",
+      "-O",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "myflix_main",
+      "-parse-as-library",
+      "-color-diagnostics",
+      "-swift-version",
+      "6",
+      "-I",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-L",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-plugin-path",
+      "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "tvshow",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "myflix" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/sources"
+    },
+    "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/myflix.product/Objects.LinkFileList"
+    },
+    "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
+    }
+  }
+}
