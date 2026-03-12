@@ -19,27 +19,27 @@
   "swiftCommands" : {
     "C.myflix-arm64-apple-macosx15.0-debug.module" : {
       "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
-      "fileList" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/sources",
-      "importPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/Modules",
+      "fileList" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/sources",
+      "importPath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/Modules",
       "inputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift"
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/sources"
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/sources"
         }
       ],
       "isLibrary" : false,
       "moduleName" : "myflix",
-      "moduleOutputPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/Modules/myflix.swiftmodule",
+      "moduleOutputPath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/Modules/myflix.swiftmodule",
       "objects" : [
-        "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
+        "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -48,7 +48,7 @@
         "-enable-batch-mode",
         "-serialize-diagnostics",
         "-index-store-path",
-        "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/index/store",
+        "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/index/store",
         "-Onone",
         "-enable-testing",
         "-j10",
@@ -56,7 +56,7 @@
         "-DDEBUG",
         "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
         "-module-cache-path",
-        "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/ModuleCache",
+        "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/ModuleCache",
         "-parseable-output",
         "-Xfrontend",
         "-entry-point-function-name",
@@ -84,24 +84,24 @@
         "-Xcc",
         "-g",
         "-package-name",
-        "tvshow"
+        "myflix"
       ],
-      "outputFileMapPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/output-file-map.json",
+      "outputFileMapPath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/output-file-map.json",
       "outputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/Modules/myflix.swiftmodule"
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/Modules/myflix.swiftmodule"
         }
       ],
       "prepareForIndexing" : false,
       "sources" : [
-        "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift"
+        "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift"
       ],
-      "tempsPath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build",
+      "tempsPath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build",
       "wholeModuleOptimization" : false
     }
   },
@@ -114,18 +114,18 @@
       "-module-name",
       "myflix",
       "-package-name",
-      "tvshow",
+      "myflix",
       "-c",
-      "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift",
+      "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift",
       "-I",
-      "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/Modules",
+      "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/Modules",
       "-target",
       "arm64-apple-macosx12.0",
       "-incremental",
       "-enable-batch-mode",
       "-serialize-diagnostics",
       "-index-store-path",
-      "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/index/store",
+      "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/index/store",
       "-Onone",
       "-enable-testing",
       "-j10",
@@ -133,7 +133,7 @@
       "-DDEBUG",
       "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
       "-module-cache-path",
-      "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/ModuleCache",
+      "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/ModuleCache",
       "-parseable-output",
       "-Xfrontend",
       "-entry-point-function-name",
@@ -161,7 +161,7 @@
       "-Xcc",
       "-g",
       "-package-name",
-      "tvshow",
+      "myflix",
       "-driver-use-frontend-path",
       "/Library/Developer/CommandLineTools/usr/bin/swiftc"
     ]
@@ -183,7 +183,7 @@
     }
   },
   "writeCommands" : {
-    "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix-entitlement.plist" : {
+    "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix-entitlement.plist" : {
       "alwaysOutOfDate" : false,
       "inputs" : [
         {
@@ -195,9 +195,9 @@
           "name" : "<com.apple.security.get-task-allow>"
         }
       ],
-      "outputFilePath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix-entitlement.plist"
+      "outputFilePath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix-entitlement.plist"
     },
-    "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/sources" : {
+    "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/sources" : {
       "alwaysOutOfDate" : false,
       "inputs" : [
         {
@@ -206,12 +206,12 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/mugen/Documents/01_Projets/TVshow/Sources/myflix/myflix.swift"
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift"
         }
       ],
-      "outputFilePath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/sources"
+      "outputFilePath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/sources"
     },
-    "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.product/Objects.LinkFileList" : {
+    "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.product/Objects.LinkFileList" : {
       "alwaysOutOfDate" : false,
       "inputs" : [
         {
@@ -220,12 +220,12 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
         }
       ],
-      "outputFilePath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/myflix.product/Objects.LinkFileList"
+      "outputFilePath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.product/Objects.LinkFileList"
     },
-    "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
+    "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
       "alwaysOutOfDate" : true,
       "inputs" : [
         {
@@ -237,7 +237,7 @@
           "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
         }
       ],
-      "outputFilePath" : "/Users/mugen/Documents/01_Projets/TVshow/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+      "outputFilePath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
     }
   }
 }
