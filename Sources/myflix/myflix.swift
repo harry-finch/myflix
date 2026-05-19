@@ -69,6 +69,7 @@ enum Command {
     case showDetails(query: String, showAllCurrentSeason: Bool)
     case dashboard
     case listTrackedShows
+    case upcomingWeek
 }
 
 struct API {
@@ -124,6 +125,7 @@ struct myflix {
         }
         
         var showAllCurrentSeason = false
+        var showUpcomingWeek = false
         var hasAdd = false
         var hasUpToDate = false
         var flag: String?
@@ -134,8 +136,12 @@ struct myflix {
         while i < args.count {
             let arg = args[i]
             switch arg {
+            case "-h", "--help":
+                return nil
             case "-l", "--list":
                 showAllCurrentSeason = true
+            case "-w":
+                showUpcomingWeek = true
             case "-a", "--add":
                 hasAdd = true
                 flag = arg
@@ -144,13 +150,13 @@ struct myflix {
                 flag = arg
             case "-r", "--reset":
                 flag = arg
-            case "-w":
+            case "-m":
                 flag = arg
                 if i + 1 < args.count {
                     arg1 = args[i+1]
                     i += 1
                 } else {
-                    print("Error: -w requires an episode number.")
+                    print("Error: -m requires an episode number.")
                     return nil
                 }
             default:
@@ -176,7 +182,7 @@ struct myflix {
             }
             
             switch flag {
-            case "-w": return .markWatched(episode: arg1 ?? "", show: query)
+            case "-m": return .markWatched(episode: arg1 ?? "", show: query)
             case "-r": return .remove(query)
             case "--reset": return .reset(query)
             default: break
@@ -184,10 +190,17 @@ struct myflix {
         }
         
         if query.isEmpty {
+            if showUpcomingWeek {
+                return .upcomingWeek
+            }
             if showAllCurrentSeason {
                 return .listTrackedShows
             }
             return .dashboard
+        }
+        
+        if showUpcomingWeek {
+            return .upcomingWeek
         }
         
         return .showDetails(query: query, showAllCurrentSeason: showAllCurrentSeason)
@@ -197,10 +210,12 @@ struct myflix {
         guard let command = parseCommand() else {
             print("Usage: myflix [flags] <show name>")
             print("Options:")
+            print("  -h, --help Show this help message")
             print("  -l, --list Show all tracked shows. If a show name is provided, show all episodes from its current season")
             print("  -a, --add  Add a new show to track")
             print("  -u         Mark the show as up to date")
-            print("  -w <ep>    Mark a specific episode and all preceding episodes as watched (e.g., S01E02)")
+            print("  -m <ep>    Mark a specific episode and all preceding episodes as watched (e.g., S01E02)")
+            print("  -w         List upcoming episodes for tracked shows in the next 7 days")
             print("  -r         Remove a show from tracking")
             print("  --reset    Reset watched episodes for a show")
             print("  (no args)  Dashboard: display all episodes left to watch")
@@ -225,7 +240,9 @@ struct myflix {
         case .showDetails(let query, let allSeason):
             await fetchAndPrintShow(query: query, showAllCurrentSeason: allSeason)
         case .listTrackedShows:
-            handleListTrackedShows()
+            await handleListTrackedShows()
+        case .upcomingWeek:
+            await handleUpcomingWeek()
         }
     }
     
@@ -453,7 +470,7 @@ struct myflix {
         }
     }
 
-    static func handleListTrackedShows() {
+    static func handleListTrackedShows() async {
         let manager = TrackerManager.shared
         let shows = manager.loadShows()
         
@@ -463,13 +480,144 @@ struct myflix {
         }
         
         print("Tracked Shows:")
-        let sortedShows = shows.values.sorted { $0.name.lowercased() < $1.name.lowercased() }
-        for show in sortedShows {
-            if let watched = show.watchedEpisode {
-                print("  - \(show.name) (Watched up to: \(watched))")
-            } else {
-                print("  - \(show.name) (No episodes watched yet)")
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let today = formatter.string(from: Date())
+        
+        var results = [(String, String?, Int?)]()
+        
+        await withTaskGroup(of: (String, String?, Int?).self) { group in
+            for (_, show) in shows {
+                group.addTask {
+                    guard let showData = try? await API.getShowByID(id: show.id) else {
+                        return (show.name, show.watchedEpisode, nil)
+                    }
+                    let episodes = showData._embedded?.episodes ?? []
+                    let watchedParsed = show.watchedEpisode.flatMap { parseEpisodeString($0) }
+                    
+                    let unwatched = episodes.filter { ep in
+                        guard let airdate = ep.airdate, !airdate.isEmpty else { return false }
+                        guard airdate <= today else { return false }
+                        
+                        if let w = watchedParsed, let es = ep.season, let en = ep.number {
+                            if es > w.0 { return true }
+                            if es == w.0 && en > w.1 { return true }
+                            return false
+                        }
+                        return true
+                    }
+                    
+                    return (show.name, show.watchedEpisode, unwatched.count)
+                }
             }
+            
+            for await result in group {
+                results.append(result)
+            }
+        }
+        
+        let sortedShows = results.sorted { $0.0.lowercased() < $1.0.lowercased() }
+        for (name, watchedEpisode, unwatchedCount) in sortedShows {
+            if let count = unwatchedCount {
+                if count == 0 {
+                    let customGreen = "\u{001B}[38;2;34;167;39m"
+                    let reset = "\u{001B}[0m"
+                    print("\(customGreen)  - \(name)\(reset)")
+                } else {
+                    print("  - \(name) (\(count) left)")
+                }
+            } else {
+                if let watched = watchedEpisode {
+                    print("  - \(name) (Watched up to: \(watched))")
+                } else {
+                    print("  - \(name) (No episodes watched yet)")
+                }
+            }
+        }
+    }
+
+    static func handleUpcomingWeek() async {
+        let manager = TrackerManager.shared
+        let shows = manager.loadShows()
+        
+        if shows.isEmpty {
+            print("You are not tracking any shows. Use -a <show> or --add <show> to start.")
+            return
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        let today = Date()
+        let todayStr = formatter.string(from: today)
+        
+        guard let nextWeek = Calendar.current.date(byAdding: .day, value: 7, to: today) else { return }
+        let nextWeekStr = formatter.string(from: nextWeek)
+        
+        var results = [(String, [Episode])]()
+        var nextEpisodes = [(String, Episode)]()
+        
+        print("Checking for upcoming episodes in the next 7 days...\n")
+        
+        await withTaskGroup(of: (String, [Episode], Episode?)?.self) { group in
+            for (_, tracked) in shows {
+                group.addTask {
+                    guard let showData = try? await API.getShowByID(id: tracked.id) else { return nil }
+                    let episodes = showData._embedded?.episodes ?? []
+                    
+                    let upcoming = episodes.filter { ep in
+                        guard let airdate = ep.airdate, !airdate.isEmpty else { return false }
+                        return airdate > todayStr && airdate <= nextWeekStr
+                    }
+                    
+                    var nextEp: Episode?
+                    let allFuture = episodes.filter { ep in
+                        guard let airdate = ep.airdate, !airdate.isEmpty else { return false }
+                        return airdate > todayStr
+                    }
+                    if !allFuture.isEmpty {
+                        nextEp = allFuture.min { ($0.airdate ?? "") < ($1.airdate ?? "") }
+                    }
+                    
+                    return (tracked.name, upcoming, nextEp)
+                }
+            }
+            
+            for await result in group {
+                if let r = result {
+                    if !r.1.isEmpty {
+                        results.append((r.0, r.1))
+                    }
+                    if let nextEp = r.2 {
+                        nextEpisodes.append((r.0, nextEp))
+                    }
+                }
+            }
+        }
+        
+        if results.isEmpty {
+            if nextEpisodes.isEmpty {
+                print("No upcoming episodes scheduled for any tracked shows.")
+            } else {
+                nextEpisodes.sort { ($0.1.airdate ?? "") < ($1.1.airdate ?? "") }
+                if let next = nextEpisodes.first {
+                    print("No upcoming episodes in the next 7 days.")
+                    print("The next episode will be:")
+                    print("  \(next.0) - \(next.1.formattedLabel) - \(next.1.name) (Airs: \(next.1.airdate ?? "Unknown"))")
+                }
+            }
+            return
+        }
+        
+        results.sort { $0.0 < $1.0 }
+        
+        for (showName, episodes) in results {
+            print("--- \(showName) ---")
+            for ep in episodes {
+                print("  \(ep.formattedLabel) - \(ep.name) (Airs: \(ep.airdate ?? "Unknown"))")
+            }
+            print("")
         }
     }
 
