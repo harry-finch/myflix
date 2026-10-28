@@ -31,6 +31,7 @@ struct InteractiveUI {
     private var searchEditing = false
     private var storageError: String?
     private var pendingDeletion: TrackedShow?
+    private var loadingProgress: (completed: Int, total: Int)?
 
     static func run() async {
         guard isatty(STDIN_FILENO) == 1, isatty(STDOUT_FILENO) == 1 else {
@@ -127,7 +128,14 @@ struct InteractiveUI {
             case "v" where view != .search && view != .details:
                 showingArchived.toggle()
                 selected = 0
-                message = showingArchived ? "Archives : 3 pour afficher toutes les séries archivées." : "Séries actives."
+                message = ""
+                let loadedIDs = Set(states.map { $0.tracked.id })
+                if shows.values.contains(where: { ($0.archived == true) == showingArchived && !loadedIDs.contains($0.id) }) {
+                    await refresh()
+                }
+                if message.isEmpty {
+                    message = showingArchived ? "Archives : 3 pour afficher toutes les séries archivées." : "Séries actives."
+                }
             case "x" where view != .search && view != .details:
                 if let state = selectedShow, var show = shows[state.tracked.id] {
                     show.archived = showingArchived ? nil : true
@@ -189,9 +197,10 @@ struct InteractiveUI {
     }
 
     private mutating func refresh() async {
-        message = "Chargement des séries…"
+        let tracked = shows.values.filter { ($0.archived == true) == showingArchived }
+        loadingProgress = (0, tracked.count)
+        message = ""
         render()
-        let tracked = Array(shows.values)
         var loaded: [ShowState] = []
         await withTaskGroup(of: ShowState.self) { group in
             for show in tracked {
@@ -204,11 +213,18 @@ struct InteractiveUI {
                     } catch { return ShowState(tracked: show, episodes: nil, status: nil, error: error.localizedDescription) }
                 }
             }
-            for await state in group { loaded.append(state) }
+            for await state in group {
+                loaded.append(state)
+                loadingProgress = (loaded.count, tracked.count)
+                render()
+            }
         }
-        states = loaded.sorted { $0.tracked.name.localizedCaseInsensitiveCompare($1.tracked.name) == .orderedAscending }
+        states.removeAll { ($0.tracked.archived == true) == showingArchived }
+        states.append(contentsOf: loaded)
+        states.sort { $0.tracked.name.localizedCaseInsensitiveCompare($1.tracked.name) == .orderedAscending }
+        loadingProgress = nil
         selected = min(selected, max(0, itemCount - 1))
-        message = storageError ?? (states.contains { $0.error != nil } ? "Certaines séries n'ont pas pu être chargées. r : réessayer" : "")
+        message = storageError ?? (loaded.contains { $0.error != nil } ? "Certaines séries n'ont pas pu être chargées. r : réessayer" : "")
     }
 
     private func airedEpisodes(_ state: ShowState) -> [Episode] {
@@ -313,6 +329,7 @@ struct InteractiveUI {
         var updated = shows
         updated[show.id] = TrackedShow(id: show.id, name: show.name, watchedEpisode: nil)
         guard save(updated) else { return }
+        showingArchived = false
         view = activeFilter; selected = 0
         await refresh()
         if let index = visibleShows.firstIndex(where: { $0.tracked.id == show.id }) { selected = index }
@@ -552,7 +569,12 @@ struct InteractiveUI {
         let selectedEnd = selected + 1 < positions.count ? positions[selected + 1] : displayRows.count
         let offset = selectedEnd > room ? selectedPosition : 0
         var lines = header
-        if rows.isEmpty && !emptyMessage.isEmpty {
+        if let progress = loadingProgress {
+            let barWidth = max(1, min(20, lineWidth - 30))
+            let filled = progress.total == 0 ? barWidth : barWidth * progress.completed / progress.total
+            let bar = String(repeating: "█", count: filled) + String(repeating: "░", count: barWidth - filled)
+            lines.append(line([Span("  Chargement  [\(bar)]  \(progress.completed)/\(progress.total)", blue)]))
+        } else if rows.isEmpty && !emptyMessage.isEmpty {
             lines.append(line([Span("  \(emptyMessage)", muted)]))
         } else {
             for item in displayRows.dropFirst(offset).prefix(room) {
