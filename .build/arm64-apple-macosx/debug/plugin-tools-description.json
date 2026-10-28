@@ -17,11 +17,15 @@
 
   ],
   "swiftCommands" : {
-    "C.myflix-arm64-apple-macosx15.0-debug.module" : {
+    "C.myflix-arm64-apple-macosx26.0-debug.module" : {
       "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
       "fileList" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/sources",
       "importPath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/Modules",
       "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/InteractiveUI.swift"
+        },
         {
           "kind" : "file",
           "name" : "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift"
@@ -39,6 +43,7 @@
       "moduleName" : "myflix",
       "moduleOutputPath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/Modules/myflix.swiftmodule",
       "objects" : [
+        "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/InteractiveUI.swift.o",
         "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
       ],
       "otherArguments" : [
@@ -62,7 +67,6 @@
         "-entry-point-function-name",
         "-Xfrontend",
         "myflix_main",
-        "-parse-as-library",
         "-swift-version",
         "6",
         "-I",
@@ -89,6 +93,10 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/InteractiveUI.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/myflix.swift.o"
         },
         {
@@ -98,6 +106,7 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/InteractiveUI.swift",
         "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift"
       ],
       "tempsPath" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build",
@@ -115,6 +124,7 @@
       "-package-name",
       "myflix",
       "-c",
+      "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/InteractiveUI.swift",
       "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift",
       "-I",
       "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/Modules",
@@ -138,7 +148,6 @@
       "-entry-point-function-name",
       "-Xfrontend",
       "myflix_main",
-      "-parse-as-library",
       "-swift-version",
       "6",
       "-I",
@@ -204,6 +213,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/InteractiveUI.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift"
         }
       ],
@@ -215,6 +228,10 @@
         {
           "kind" : "virtual",
           "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/debug/myflix.build/InteractiveUI.swift.o"
         },
         {
           "kind" : "file",

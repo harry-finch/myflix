@@ -3,6 +3,7 @@ import Foundation
 struct ShowResponse: Codable {
     let id: Int
     let name: String
+    let status: String?
     let _embedded: Embedded?
 }
 
@@ -33,6 +34,7 @@ struct TrackedShow: Codable {
     let id: Int
     let name: String
     var watchedEpisode: String? // e.g., "S01E02"
+    var archived: Bool? = nil
 }
 
 struct TrackerManager {
@@ -41,7 +43,8 @@ struct TrackerManager {
     
     init() {
         let homeDir = FileManager.default.homeDirectoryForCurrentUser
-        fileURL = homeDir.appendingPathComponent(".tvshow_tracker.json")
+        fileURL = ProcessInfo.processInfo.environment["MYFLIX_TRACKER_FILE"].map { URL(fileURLWithPath: $0) }
+            ?? homeDir.appendingPathComponent(".tvshow_tracker.json")
     }
     
     func loadShows() -> [Int: TrackedShow] {
@@ -70,6 +73,7 @@ enum Command {
     case dashboard
     case listTrackedShows
     case upcomingWeek
+    case interactive
 }
 
 struct API {
@@ -89,6 +93,7 @@ struct API {
         
         guard let url = components.url else { return nil }
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.setValue("TVshow CLI / 1.0", forHTTPHeaderField: "User-Agent")
         
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -103,6 +108,7 @@ struct API {
     static func getShowByID(id: Int) async throws -> ShowResponse? {
         let url = URL(string: "https://api.tvmaze.com/shows/\(id)?embed[]=episodes")!
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.setValue("TVshow CLI / 1.0", forHTTPHeaderField: "User-Agent")
         
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -123,6 +129,7 @@ struct myflix {
         if args.isEmpty {
             return .dashboard
         }
+        if args == ["ui"] { return .interactive }
         
         var showAllCurrentSeason = false
         var showUpcomingWeek = false
@@ -218,11 +225,14 @@ struct myflix {
             print("  -w         List upcoming episodes for tracked shows in the next 7 days")
             print("  -r         Remove a show from tracking")
             print("  --reset    Reset watched episodes for a show")
+            print("  ui         Open the interactive interface")
             print("  (no args)  Dashboard: display all episodes left to watch")
             return
         }
         
         switch command {
+        case .interactive:
+            await InteractiveUI.run()
         case .add(let query):
             await handleAdd(query)
         case .markUpToDate(let query):
@@ -398,7 +408,7 @@ struct myflix {
     
     static func handleDashboard() async {
         let manager = TrackerManager.shared
-        let shows = manager.loadShows()
+        let shows = manager.loadShows().filter { $0.value.archived != true }
         
         if shows.isEmpty {
             print("You are not tracking any shows. Use --add <show> to start.")
@@ -472,7 +482,7 @@ struct myflix {
 
     static func handleListTrackedShows() async {
         let manager = TrackerManager.shared
-        let shows = manager.loadShows()
+        let shows = manager.loadShows().filter { $0.value.archived != true }
         
         if shows.isEmpty {
             print("You are not tracking any shows. Use -a <show> or --add <show> to start.")
@@ -539,7 +549,7 @@ struct myflix {
 
     static func handleUpcomingWeek() async {
         let manager = TrackerManager.shared
-        let shows = manager.loadShows()
+        let shows = manager.loadShows().filter { $0.value.archived != true }
         
         if shows.isEmpty {
             print("You are not tracking any shows. Use -a <show> or --add <show> to start.")

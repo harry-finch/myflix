@@ -2,7 +2,7 @@
 
 **myflix** is a native macOS command-line tracking application written in Swift that helps you keep track of the TV shows you watch. By leveraging the [TVmaze API](https://www.tvmaze.com/api), it easily fetches show details, aired episodes, and upcoming airdates without any hassle.
 
-Your personalized tracked show data is saved locally in your home directory at `~/.tvshow_tracker.json`.
+Your personalized tracked show data is saved locally in your home directory at `~/.tvshow_tracker.json`. Set `MYFLIX_TRACKER_FILE` to use a different file.
 
 ## Features
 
@@ -36,6 +36,12 @@ You can find the built executable in `.build/release/myflix`. Consider creating 
 myflix [flags] <show name>
 ```
 
+### Interactive interface
+
+Run `myflix ui` in a terminal to browse your shows. Use the arrow keys (or `j`/`k`) and Enter to open a show. Press `1`, `2`, or `3` for unwatched episodes, upcoming episodes, or all tracked shows; `a` or `/` to search TVmaze and add a show; `r` to refresh; `d` to remove a selected show (with confirmation); `x` to archive a show or restore it from the archive; `v` to switch between active and archived shows; and `q` to quit. Archived shows keep their progress and are hidden from the active lists, including the non-interactive dashboard, list and upcoming commands. The current filter also applies to the archive; press `3` to see all archived shows. The same `1`, `2`, and `3` filters work inside a show: unwatched episodes (including future and undated episodes), episodes coming in the next 7 days, and all episodes. Upcoming episodes have a different color and a clock symbol; episodes without an air date have a question mark. In a show, select an aired episode and press `m` to mark it and all preceding episodes as watched, or press `u` to mark the show up to date. Press `b` or Escape to return.
+
+The interactive interface uses the same local tracker as the commands below. The existing no-argument dashboard and command-line flags remain available.
+
 ### Options & Flags
 
 If no arguments are provided to `myflix`, the app will display your **Dashboard**, showing all tracked shows that have unwatched aired episodes.
@@ -45,7 +51,8 @@ If no arguments are provided to `myflix`, the app will display your **Dashboard*
 | `-l`, `--list` | `<show name>` (optional) | List all tracked shows. If a `<show name>` is provided, it fetches and lists all episodes from its current season. |
 | `-a`, `--add` | `<show name>` | Adds a new show to your tracking list. |
 | `-u` | `<show name>` | Marks a tracked show as up-to-date (sets watched episode to the latest currently aired episode). |
-| `-w` | `<ep>` `<show name>` | Marks a specific episode and all preceding episodes as watched for the given show (e.g., `myflix -w S01E02 "The Boys"`). |
+| `-m` | `<ep>` `<show name>` | Marks a specific episode and all preceding episodes as watched for the given show (e.g., `myflix -w S01E02 "The Boys"`). |
+| `-w` | — | Lists upcoming episodes in the next 7 days. |
 | `-r` | `<show name>` | Removes a show from your tracking list entirely. |
 | `--reset` | `<show name>` | Resets watched progress for a tracked show. |
 
@@ -63,7 +70,7 @@ myflix --add "Severance"
 
 **Mark an exact episode as watched**:
 ```bash
-myflix -w S01E05 "Severance"
+myflix -m S01E05 "Severance"
 ```
 
 **List all episodes of a current season**:

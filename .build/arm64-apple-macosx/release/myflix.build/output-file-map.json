@@ -4,6 +4,12 @@
     "object": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/myflix.o",
     "swift-dependencies": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/master.swiftdeps"
   },
+  "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/InteractiveUI.swift": {
+    "object": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/InteractiveUI.swift.o",
+    "swiftmodule": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/InteractiveUI~partial.swiftmodule",
+    "swift-dependencies": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/InteractiveUI.swiftdeps",
+    "diagnostics": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/InteractiveUI.dia"
+  },
   "/Users/mugen/Documents/01_Projets/myflix/Sources/myflix/myflix.swift": {
     "object": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/myflix.swift.o",
     "swiftmodule": "/Users/mugen/Documents/01_Projets/myflix/.build/arm64-apple-macosx/release/myflix.build/myflix~partial.swiftmodule",
