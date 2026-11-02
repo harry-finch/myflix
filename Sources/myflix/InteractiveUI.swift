@@ -12,6 +12,16 @@ private struct ShowState {
     let error: String?
 }
 
+private struct CachedShow: Codable {
+    let episodes: [Episode]
+    let status: String?
+}
+
+private struct DailyCache: Codable {
+    let date: String
+    var shows: [Int: CachedShow]
+}
+
 private enum View {
     case dashboard, upcoming, all, details, search
 }
@@ -64,6 +74,8 @@ struct InteractiveUI {
     }
 
     private mutating func start() async {
+        loadingProgress = (0, 0)
+        render()
         load()
         await refresh()
         while true {
@@ -119,7 +131,7 @@ struct InteractiveUI {
                 view = activeFilter
                 selected = visibleShows.firstIndex { $0.tracked.id == detailID } ?? 0
                 message = ""
-            case "r": await refresh()
+            case "r": await refresh(force: true)
             case "\r", "\n":
                 if view == .search { await addSelected() }
                 else if view != .details, let state = selectedShow {
@@ -196,41 +208,69 @@ struct InteractiveUI {
         } catch { message = "Enregistrement impossible : \(error.localizedDescription)"; return false }
     }
 
-    private mutating func refresh() async {
+    private mutating func refresh(force: Bool = false) async {
         let tracked = shows.values.filter { ($0.archived == true) == showingArchived }
-        loadingProgress = (0, tracked.count)
-        message = ""
-        render()
+        let cacheURL = TrackerManager.shared.fileURL.appendingPathExtension("cache")
+        let date = today
+        let stored = (try? Data(contentsOf: cacheURL)).flatMap { try? JSONDecoder().decode(DailyCache.self, from: $0) }
+        var cache = stored.flatMap { $0.date == date ? $0 : nil } ?? DailyCache(date: date, shows: [:])
+        cache.shows = cache.shows.filter { shows[$0.key] != nil }
         var loaded: [ShowState] = []
+        var toFetch: [TrackedShow] = []
+        for show in tracked {
+            if !force, let cached = cache.shows[show.id] {
+                loaded.append(ShowState(tracked: show, episodes: cached.episodes, status: cached.status, error: nil))
+            } else {
+                cache.shows.removeValue(forKey: show.id)
+                toFetch.append(show)
+            }
+        }
+        loadingProgress = toFetch.isEmpty ? nil : (0, toFetch.count)
+        message = ""
+        if !toFetch.isEmpty { render() }
+        var completed = 0
         await withTaskGroup(of: ShowState.self) { group in
-            for show in tracked {
+            for show in toFetch {
                 group.addTask {
                     do {
                         guard let data = try await API.getShowByID(id: show.id) else {
                             return ShowState(tracked: show, episodes: nil, status: nil, error: "TVmaze indisponible")
                         }
-                        return ShowState(tracked: show, episodes: data._embedded?.episodes ?? [], status: data.status, error: nil)
+                        guard let episodes = data._embedded?.episodes else {
+                            return ShowState(tracked: show, episodes: nil, status: data.status, error: "Épisodes indisponibles")
+                        }
+                        return ShowState(tracked: show, episodes: episodes, status: data.status, error: nil)
                     } catch { return ShowState(tracked: show, episodes: nil, status: nil, error: error.localizedDescription) }
                 }
             }
             for await state in group {
                 loaded.append(state)
-                loadingProgress = (loaded.count, tracked.count)
+                if let episodes = state.episodes, state.error == nil {
+                    cache.shows[state.tracked.id] = CachedShow(episodes: episodes, status: state.status)
+                }
+                completed += 1
+                loadingProgress = (completed, toFetch.count)
                 render()
             }
+        }
+        var cacheError: String?
+        if !toFetch.isEmpty {
+            do { try JSONEncoder().encode(cache).write(to: cacheURL, options: .atomic) }
+            catch { cacheError = "Enregistrement du cache impossible : \(error.localizedDescription)" }
         }
         states.removeAll { ($0.tracked.archived == true) == showingArchived }
         states.append(contentsOf: loaded)
         states.sort { $0.tracked.name.localizedCaseInsensitiveCompare($1.tracked.name) == .orderedAscending }
         loadingProgress = nil
         selected = min(selected, max(0, itemCount - 1))
-        message = storageError ?? (loaded.contains { $0.error != nil } ? "Certaines séries n'ont pas pu être chargées. r : réessayer" : "")
+        message = storageError ?? (loaded.contains { $0.error != nil } ? "Certaines séries n'ont pas pu être chargées. r : réessayer" : cacheError ?? "")
     }
 
     private func airedEpisodes(_ state: ShowState) -> [Episode] {
-        (state.episodes ?? []).filter { episode in
+        let currentDate = today
+        return (state.episodes ?? []).filter { episode in
             guard let date = episode.airdate, !date.isEmpty else { return false }
-            return date <= today && episode.season != nil && episode.number != nil
+            return date <= currentDate && episode.season != nil && episode.number != nil
         }.sorted { ($0.season!, $0.number!) < ($1.season!, $1.number!) }
     }
 
@@ -262,13 +302,14 @@ struct InteractiveUI {
     }
 
     private func upcoming(_ state: ShowState) -> [Episode] {
+        let currentDate = today
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy-MM-dd"
         let end = formatter.string(from: Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date())
         return (state.episodes ?? []).filter { ep in
             guard let date = ep.airdate, !date.isEmpty else { return false }
-            return date > today && date <= end
+            return date > currentDate && date <= end
         }.sorted { ($0.airdate ?? "") < ($1.airdate ?? "") }
     }
 
@@ -302,7 +343,11 @@ struct InteractiveUI {
         var updated = shows
         updated[id] = show
         guard save(updated) else { return }
-        await refresh()
+        if let index = states.firstIndex(where: { $0.tracked.id == id }) {
+            let state = states[index]
+            states[index] = ShowState(tracked: show, episodes: state.episodes, status: state.status, error: state.error)
+        }
+        selected = min(selected, max(0, itemCount - 1))
         message = "\(show.name) : progression enregistrée jusqu'à \(episode)."
     }
 
@@ -333,7 +378,7 @@ struct InteractiveUI {
         view = activeFilter; selected = 0
         await refresh()
         if let index = visibleShows.firstIndex(where: { $0.tracked.id == show.id }) { selected = index }
-        message = "\(show.name) a été ajoutée."
+        if message.isEmpty { message = "\(show.name) a été ajoutée." }
     }
 
     private func readKey() -> String? {
@@ -459,7 +504,7 @@ struct InteractiveUI {
         var rows: [[Span]] = []
         var childRows: [[[Span]]] = []
         var emptyMessage = ""
-        switch view {
+        if loadingProgress == nil { switch view {
         case .details:
             header.append(line([Span("  \(detailState?.tracked.name ?? "Série")", bright),
                                 Span("   ·   \(statusLabel(detailState?.status))", blue),
@@ -467,6 +512,7 @@ struct InteractiveUI {
             header.append(line([Span("  Progression  ", muted), Span(detailState?.tracked.watchedEpisode ?? "Aucun épisode vu", blue)]))
             header.append("")
             let episodes = detailEpisodes
+            let currentDate = today
             let watched = detailState?.tracked.watchedEpisode.flatMap { myflix.parseEpisodeString($0) }
             let episodeWidth = min(14, max(7, episodes.map { cells($0.formattedLabel) }.max() ?? 7))
             let titleWidth = max(0, lineWidth - 5 - 3 - episodeWidth - 2 - 2 - 10)
@@ -476,7 +522,7 @@ struct InteractiveUI {
                     done = (season, number) <= watched
                 } else { done = false }
                 let airdate = ep.airdate.flatMap { $0.isEmpty ? nil : $0 }
-                let future = airdate.map { $0 > today } ?? false
+                let future = airdate.map { $0 > currentDate } ?? false
                 let symbol = future ? "◷  " : done ? "✓  " : airdate == nil ? "?  " : "○  "
                 let statusColor = future ? blue : done ? green : airdate == nil ? muted : amber
                 return [Span(symbol, statusColor),
@@ -509,9 +555,10 @@ struct InteractiveUI {
             header.append(line([Span(showingArchived ? "  Archives · \(title)" : "  \(title)", bright)]))
             header.append(line([Span("  \(subtitle)", muted)]))
             header.append("")
-            let nameWidth = min(max(12, lineWidth - 52), max(12, visibleShows.map { cells($0.tracked.name) }.max() ?? 12))
+            let visible = visibleShows
+            let nameWidth = min(max(12, lineWidth - 52), max(12, visible.map { cells($0.tracked.name) }.max() ?? 12))
             let statusWidth = 16
-            rows = visibleShows.map { state in
+            rows = visible.map { state in
                 let name = column(state.tracked.name, width: nameWidth)
                 let status = Span("  " + column(statusLabel(state.status), width: statusWidth), blue)
                 if state.error != nil {
@@ -526,7 +573,7 @@ struct InteractiveUI {
                 return [Span("●  ", count == 0 ? green : amber), Span(name, bright), status,
                         Span(count == 0 ? "  À jour" : "  \(count) épisode(s) à regarder", count == 0 ? green : amber)]
             }
-            let treeEpisodes = visibleShows.map { view == .upcoming ? upcoming($0) : unwatched($0) }
+            let treeEpisodes = visible.map { view == .upcoming ? upcoming($0) : unwatched($0) }
             let episodeWidth = min(14, max(7, treeEpisodes.flatMap { $0 }.map { cells($0.formattedLabel) }.max() ?? 7))
             let titleWidth = max(0, lineWidth - 5 - 5 - episodeWidth - 2 - 2 - 10)
             childRows = treeEpisodes.map { episodes in
@@ -537,10 +584,11 @@ struct InteractiveUI {
                             Span("  " + (ep.airdate ?? "—"), muted)]
                 }
             }
-            emptyMessage = showingArchived ? "Aucune série archivée dans ce filtre. 3 : toutes les archives." :
+            emptyMessage = storageError != nil ? "Impossible de lire les séries suivies." :
+                showingArchived ? "Aucune série archivée dans ce filtre. 3 : toutes les archives." :
                 shows.isEmpty ? "Aucune série suivie. Appuie sur a pour commencer." :
                 view == .dashboard ? "Tout est à jour !" : "Rien à afficher pour le moment."
-        }
+        } }
 
         let footerHeight = height >= 12 ? 4 : 2
         // On narrow or short terminals, retain room for a selected row and controls.
@@ -570,10 +618,14 @@ struct InteractiveUI {
         let offset = selectedEnd > room ? selectedPosition : 0
         var lines = header
         if let progress = loadingProgress {
-            let barWidth = max(1, min(20, lineWidth - 30))
-            let filled = progress.total == 0 ? barWidth : barWidth * progress.completed / progress.total
-            let bar = String(repeating: "█", count: filled) + String(repeating: "░", count: barWidth - filled)
-            lines.append(line([Span("  Chargement  [\(bar)]  \(progress.completed)/\(progress.total)", blue)]))
+            if progress.total == 0 {
+                lines.append(line([Span("  Préparation de la mise à jour…", blue)]))
+            } else {
+                let barWidth = max(1, min(20, lineWidth - 30))
+                let filled = barWidth * progress.completed / progress.total
+                let bar = String(repeating: "█", count: filled) + String(repeating: "░", count: barWidth - filled)
+                lines.append(line([Span("  Mise à jour [\(bar)]  \(progress.completed)/\(progress.total)", blue)]))
+            }
         } else if rows.isEmpty && !emptyMessage.isEmpty {
             lines.append(line([Span("  \(emptyMessage)", muted)]))
         } else {

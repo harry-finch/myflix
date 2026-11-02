@@ -124,12 +124,16 @@ struct API {
 @main
 struct myflix {
     static func parseCommand() -> Command? {
-        let args = Array(CommandLine.arguments.dropFirst())
+        var args = Array(CommandLine.arguments.dropFirst())
         
         if args.isEmpty {
-            return .dashboard
+            return .interactive
         }
         if args == ["ui"] { return .interactive }
+        if args.first == "cli" || args.first == "--cli" {
+            args.removeFirst()
+            if args.isEmpty { return .dashboard }
+        }
         
         var showAllCurrentSeason = false
         var showUpcomingWeek = false
@@ -215,7 +219,7 @@ struct myflix {
 
     static func main() async {
         guard let command = parseCommand() else {
-            print("Usage: myflix [flags] <show name>")
+            print("Usage: myflix [ui | cli [flags] <show name>]")
             print("Options:")
             print("  -h, --help Show this help message")
             print("  -l, --list Show all tracked shows. If a show name is provided, show all episodes from its current season")
@@ -226,7 +230,8 @@ struct myflix {
             print("  -r         Remove a show from tracking")
             print("  --reset    Reset watched episodes for a show")
             print("  ui         Open the interactive interface")
-            print("  (no args)  Dashboard: display all episodes left to watch")
+            print("  cli        Command-line dashboard (flags and show names also work after cli)")
+            print("  (no args)  Open the interactive interface")
             return
         }
         
